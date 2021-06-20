@@ -26,7 +26,7 @@ type MySQL struct {
 	Database string
 }
 
-func LoadProperties(path string, out *interface{}) error {
+func LoadProperties(path string, out interface{}) error {
 	doc, err := ioutil.ReadFile(path)
 	if err != nil {
 		return err
