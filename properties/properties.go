@@ -1,30 +1,9 @@
 package properties
 
 import (
-	"github.com/go-yaml/yaml"
+	"gopkg.in/yaml.v2"
 	"io/ioutil"
 )
-
-type Properties struct {
-	InfluxDB InfluxDB
-	MySQL    MySQL
-}
-
-type InfluxDB struct {
-	Addr     string
-	Database string
-	Username string
-	Password string
-}
-
-type MySQL struct {
-	Username string
-	Password string
-	Network  string
-	Host     string
-	Port     int
-	Database string
-}
 
 func LoadProperties(path string, out interface{}) error {
 	doc, err := ioutil.ReadFile(path)
