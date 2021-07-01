@@ -2,32 +2,31 @@ package mysql
 
 import (
 	"fmt"
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/jmoiron/sqlx"
 	"strings"
 )
 
 type DBI interface {
-	Exec(sql string) error
 	Drop(table string) error
 	Insert(table string, m map[string]interface{}) error
 	BatchInsert(table string, data []map[string]interface{}) error
+	FindBy(table string, dest interface{}, value map[string]interface{}) (map[string]interface{}, error)
+	Find(table string, desc interface{}) error
 }
 
 type MDB struct {
-	db *sqlx.DB
+	*sqlx.DB
 }
 
 func (mdb *MDB) SetDB(db *sqlx.DB) error {
-	if mdb == nil {
-		mdb = &MDB{}
-	}
-	if mdb.db != nil {
-		err := mdb.db.Close()
+	if mdb.DB != nil {
+		err := mdb.DB.Close()
 		if err != nil {
 			return err
 		}
 	} else {
-		mdb.db = db
+		mdb.DB = db
 	}
 	return nil
 }
@@ -42,23 +41,26 @@ func (mdb *MDB) Connect(host, username, password, database string) error {
 	return err
 }
 
-func (mdb *MDB) Exec(sql string) error {
-	_, err := mdb.db.Exec(sql)
-	return err
-}
-
 func (mdb *MDB) Drop(table string) error {
 	return nil
 }
 
 func (mdb *MDB) Insert(table string, m map[string]interface{}) error {
-	_, err := mdb.db.NamedExec(insertSQL(table, m), m)
+	_, err := mdb.DB.NamedExec(insertSQL(table, m), m)
 	return err
 }
 
 func (mdb *MDB) BatchInsert(table string, data []map[string]interface{}) error {
-	_, err := mdb.db.NamedExec(insertSQL(table, data[0]), data)
+	_, err := mdb.DB.NamedExec(insertSQL(table, data[0]), data)
 	return err
+}
+
+func (mdb *MDB) FindBy(table string, dest interface{}, value map[string]interface{}) (map[string]interface{}, error) {
+	return nil, nil
+}
+
+func (mdb *MDB) Find(table string, dest interface{}) error {
+	return nil
 }
 
 func insertSQL(table string, m map[string]interface{}) string {
@@ -82,4 +84,8 @@ func insertSQL(table string, m map[string]interface{}) string {
 	build.WriteString(values.String())
 	build.WriteString(")")
 	return build.String()
+}
+
+func structToMap(dest interface{}) (map[string]interface{}, error) {
+	return nil, nil
 }
