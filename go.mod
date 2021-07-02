@@ -1,4 +1,4 @@
-module heavenutil
+module github.com/HeavenKeyn/heavenutil
 
 go 1.16
 
