@@ -1,8 +1,12 @@
 package main
 
+import (
+	"fmt"
+	"github.com/HeavenKeyn/heavenutil/comutil"
+)
+
 func main() {
-	//var mdb mysql.MDB
-	//mdb.Connect("heaven.com","root","20210618")
+	fmt.Println(comutil.HumpToUnderline("MonMoo"))
 }
 
 type Properties struct {
