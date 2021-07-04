@@ -1,9 +1,14 @@
 package comutil
 
 import (
+	"encoding/json"
+	"errors"
+	"fmt"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"reflect"
+	"strings"
+	"unicode"
 )
 
 func LoadProperties(path string, out interface{}) error {
@@ -29,4 +34,26 @@ func StructToMapByTag(obj interface{}, tagName string) map[string]interface{} {
 		}
 	}
 	return m
+}
+
+func HumpToUnderline(title string) string {
+	var build strings.Builder
+	for _, u := range title {
+		if unicode.IsUpper(u) {
+			build.WriteString("_")
+		}
+		build.WriteRune(u)
+	}
+	return strings.ToLower(build.String()[1:])
+}
+
+func ValueToFloat(value interface{}) (float64, error) {
+	switch value.(type) {
+	case float64:
+		return value.(float64), nil
+	case json.Number:
+		return value.(json.Number).Float64()
+	default:
+		return 0, errors.New(fmt.Sprint(value, "不是float64类型"))
+	}
 }
