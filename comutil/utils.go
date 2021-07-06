@@ -7,6 +7,7 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"reflect"
+	"strconv"
 	"strings"
 	"unicode"
 )
@@ -47,12 +48,22 @@ func HumpToUnderline(title string) string {
 	return strings.ToLower(build.String()[1:])
 }
 
-func ValueToFloat(value interface{}) (float64, error) {
+func ValueToFloat64(value interface{}) (float64, error) {
 	switch value.(type) {
 	case float64:
 		return value.(float64), nil
+	case string:
+		return strconv.ParseFloat(value.(string), 64)
 	case json.Number:
 		return value.(json.Number).Float64()
+	case float32:
+		return float64(value.(float32)), nil
+	case int64:
+		return float64(value.(int64)), nil
+	case int32:
+		return float64(value.(int32)), nil
+	case int:
+		return float64(value.(int)), nil
 	default:
 		return 0, errors.New(fmt.Sprint(value, "不是float64类型"))
 	}
