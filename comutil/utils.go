@@ -38,17 +38,29 @@ func StructToMapByTag(obj interface{}, tagName string) map[string]interface{} {
 }
 
 func HumpToUnderline(title string) string {
-	var build strings.Builder
-	for _, u := range title {
-		if unicode.IsUpper(u) {
-			build.WriteString("_")
-		}
-		build.WriteRune(u)
+	if title == "" {
+		return title
 	}
-	return strings.ToLower(build.String()[1:])
+	var build strings.Builder
+	st := []rune(title)
+	build.WriteRune(st[0])
+	for i := 1; i < len(st); i++ {
+		if unicode.IsUpper(st[i]) {
+			if !unicode.IsUpper(st[i-1]) {
+				build.WriteString("_")
+			} else if i+1 < len(st) && unicode.IsLower(st[i+1]) {
+				build.WriteString("_")
+			}
+		}
+		build.WriteRune(st[i])
+	}
+	return strings.ToLower(build.String())
 }
 
 func ValueToFloat64(value interface{}) (float64, error) {
+	if value == nil {
+		return 0, errors.New("空值")
+	}
 	switch value.(type) {
 	case float64:
 		return value.(float64), nil
@@ -66,5 +78,25 @@ func ValueToFloat64(value interface{}) (float64, error) {
 		return float64(value.(int)), nil
 	default:
 		return 0, errors.New(fmt.Sprint(value, "不是float64类型"))
+	}
+}
+
+func ValueToInt64(value interface{}) (int64, error) {
+	if value == nil {
+		return 0, errors.New("空值")
+	}
+	switch value.(type) {
+	case int64:
+		return value.(int64), nil
+	case string:
+		return strconv.ParseInt(value.(string), 10, 64)
+	case json.Number:
+		return value.(json.Number).Int64()
+	case int32:
+		return int64(value.(int32)), nil
+	case int:
+		return int64(value.(int)), nil
+	default:
+		return 0, errors.New(fmt.Sprint(value, "不是int64类型"))
 	}
 }
