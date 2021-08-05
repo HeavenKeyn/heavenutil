@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <property name="LOG_PROFILE" value="sany-realtime" />
+    <property name="LOG_HOME" value="airan-1314" />
+
+    <appender>
+        <file>${LOG_HOME}/sanywind.${LOG_PROFILE}.log</file>
+        <policy>
+            <FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/sanywind.${LOG_PROFILE}.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
+            <MaxFileSize>50MB</MaxFileSize>
+            <MaxHistory>100</MaxHistory>
+            <totalSizeCap>3GB</totalSizeCap>
+        </policy>
+    </appender>
+</configuration>
