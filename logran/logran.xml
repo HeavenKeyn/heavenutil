@@ -2,8 +2,9 @@
 <configuration>
     <property name="LOG_PROFILE" value="sany-realtime" />
     <property name="LOG_HOME" value="airan-1314" />
+    <property name="Module" value="github.com/HeavenKeyn/heavenutil" />
 
-    <appender>
+    <appender name="test">
         <file>${LOG_HOME}/sanywind.${LOG_PROFILE}.log</file>
         <policy>
             <FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/sanywind.${LOG_PROFILE}.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
@@ -12,4 +13,8 @@
             <totalSizeCap>3GB</totalSizeCap>
         </policy>
     </appender>
+
+    <logger func="${Module}/logran.TestIOHook" level="error" additivity="false">
+        <appender-ref ref="test" />
+    </logger>
 </configuration>

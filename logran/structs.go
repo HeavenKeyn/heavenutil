@@ -22,6 +22,9 @@ type xmlMapEntry struct {
 	XMLName xml.Name
 	Value   string `xml:",chardata"`
 }
+
+// Policy 该类主要为自定义日志规则
+//如：日志文件名、文件大小、分割周期等
 type Policy map[string]string
 
 func (p *Policy) UnmarshalXML(d *xml.Decoder, _ xml.StartElement) error {
@@ -40,6 +43,7 @@ func (p *Policy) UnmarshalXML(d *xml.Decoder, _ xml.StartElement) error {
 }
 
 type Appender struct {
+	Name   string `xml:"name,attr"`
 	File   string `xml:"file"`
 	Policy Policy `xml:"policy"`
 }
@@ -57,6 +61,6 @@ type Logger struct {
 }
 
 type AppenderRef struct {
-	Ref   string       `xml:"ref,attr"`
-	Level logrus.Level `xml:"level,attr"`
+	Ref      string `xml:"ref,attr"`
+	Appender Appender
 }

@@ -18,6 +18,7 @@ func LoadConfiguration(path string) (*Configuration, error) {
 		return nil, err
 	}
 	replaceProperty(config)
+	addAppender(config)
 	return config, nil
 }
 
@@ -31,6 +32,20 @@ func replaceProperty(config *Configuration) {
 				config.Appender[i].Policy[k] = strings.ReplaceAll(v, oldStr, newStr)
 			}
 		}
+		for i, logger := range config.Logger {
+			config.Logger[i].Func = strings.ReplaceAll(logger.Func, oldStr, newStr)
+		}
 	}
+}
 
+func addAppender(config *Configuration) {
+	for i, logger := range config.Logger {
+		for j, ref := range logger.AppenderRef {
+			for _, appender := range config.Appender {
+				if ref.Ref == appender.Name {
+					config.Logger[i].AppenderRef[j].Appender = appender
+				}
+			}
+		}
+	}
 }
