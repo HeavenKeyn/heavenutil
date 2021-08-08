@@ -5,7 +5,7 @@
 该包主要集合封装常用MySQL操作
 ## logran
 以logrus为基础，提供仿logback的日志配置功能  
-配置文件格式：[logran.xml](logran/logran.xml)  
+配置文件格式：[logran.xml](logran/testdata/logran.xml)  
 配置类：[Configuration](logran/structs.go)  
 读取配置文件方式：
 
