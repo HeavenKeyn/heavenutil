@@ -39,9 +39,14 @@ func replaceProperty(config *Configuration) {
 }
 
 func addAppender(config *Configuration) {
-	for i, logger := range config.Logger {
-		for j, ref := range logger.AppenderRef {
-			for _, appender := range config.Appender {
+	for _, appender := range config.Appender {
+		for i, ref := range config.Root.AppenderRef {
+			if ref.Ref == appender.Name {
+				config.Root.AppenderRef[i].Appender = appender
+			}
+		}
+		for i, logger := range config.Logger {
+			for j, ref := range logger.AppenderRef {
 				if ref.Ref == appender.Name {
 					config.Logger[i].AppenderRef[j].Appender = appender
 				}

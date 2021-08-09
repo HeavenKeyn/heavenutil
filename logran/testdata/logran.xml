@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-    <property name="LOG_PROFILE" value="sany-realtime" />
-    <property name="LOG_HOME" value="airan-1314" />
     <property name="Module" value="github.com/HeavenKeyn/heavenutil" />
+    <property name="LOG_PROFILE" value="testIOHook" />
+    <property name="LOG_HOME" value="testdata" />
 
     <appender name="test">
         <file>${LOG_HOME}/sanywind.${LOG_PROFILE}.log</file>
@@ -13,6 +13,10 @@
             <totalSizeCap>3GB</totalSizeCap>
         </policy>
     </appender>
+
+    <root level="info">
+        <appender-ref ref="console" />
+    </root>
 
     <logger func="${Module}/logran.TestIOHook" level="error" additivity="false">
         <appender-ref ref="test" />
