@@ -6,38 +6,81 @@ import (
 )
 
 type IOHook struct {
-	Logger
 	levels []logrus.Level
 	Writer io.Writer
 }
 
-func NewIOHook(logger Logger, writer io.Writer) IOHook {
-	ioHook := IOHook{
-		Logger: logger,
-		Writer: writer,
-	}
+func (h *IOHook) SetLevel(level logrus.Level) {
 	levels := make([]logrus.Level, 0)
-	for _, level := range logrus.AllLevels {
-		if level <= logger.Level {
-			levels = append(levels, level)
+	for _, l := range logrus.AllLevels {
+		if l <= level {
+			levels = append(levels, l)
 		}
 	}
-	ioHook.levels = levels
-	return ioHook
+	h.levels = levels
 }
 
-func (hook IOHook) Levels() []logrus.Level {
-	return hook.levels
+func (h *IOHook) SetWriter(writers ...io.Writer) {
+	h.Writer = io.MultiWriter(writers...)
 }
 
-func (hook IOHook) Fire(entry *logrus.Entry) error {
-	if entry.Caller.Function != hook.Func {
-		return nil
-	}
+func (h IOHook) Levels() []logrus.Level {
+	return h.levels
+}
+
+func (h IOHook) Fire(entry *logrus.Entry) error {
 	line, err := entry.Bytes()
 	if err != nil {
 		return err
 	}
-	_, err = hook.Writer.Write(line)
+	_, err = h.Writer.Write(line)
 	return err
+}
+
+type RootHook struct {
+	IOHook
+	funcS []string
+}
+
+func NewRootHook(config Configuration, writer io.Writer) RootHook {
+	var hook RootHook
+	hook.SetWriter(writer)
+	hook.SetLevel(config.Root.Level)
+	hook.funcS = make([]string, 0)
+	for _, logger := range config.Logger {
+		if !logger.Additivity {
+			hook.funcS = append(hook.funcS, logger.Func)
+		}
+	}
+	return hook
+}
+
+func (hook RootHook) Fire(entry *logrus.Entry) error {
+	for _, s := range hook.funcS {
+		if entry.Caller.Function == s {
+			return nil
+		}
+	}
+	return hook.IOHook.Fire(entry)
+}
+
+type LoggerHook struct {
+	IOHook
+	logger Logger
+}
+
+func NewLoggerHook(logger Logger, writer io.Writer) LoggerHook {
+	ioHook := LoggerHook{
+		logger: logger,
+	}
+	ioHook.SetLevel(logger.Level)
+	ioHook.SetWriter(writer)
+	return ioHook
+}
+
+func (hook LoggerHook) Fire(entry *logrus.Entry) error {
+	if entry.Caller.Function != hook.logger.Func {
+		return nil
+	}
+	return hook.IOHook.Fire(entry)
 }

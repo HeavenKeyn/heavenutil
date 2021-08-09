@@ -17,10 +17,7 @@ func (e *MultiErrors) Append(err error) {
 }
 
 func (e *MultiErrors) AddError(args ...interface{}) {
-	if e.errors == nil {
-		e.errors = make([]error, 0)
-	}
-	e.errors = append(e.errors, Error(args...))
+	e.Append(Error(args...))
 }
 
 func (e *MultiErrors) GetErrors() []error {
@@ -28,6 +25,9 @@ func (e *MultiErrors) GetErrors() []error {
 }
 
 func (e *MultiErrors) GetError() error {
+	if e.errors == nil || len(e.errors) == 0 {
+		return nil
+	}
 	return errors.New(fmt.Sprint(e.errors))
 }
 

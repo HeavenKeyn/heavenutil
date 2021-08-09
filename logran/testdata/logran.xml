@@ -18,7 +18,11 @@
         <appender-ref ref="console" />
     </root>
 
-    <logger func="${Module}/logran.TestIOHook" level="error" additivity="false">
+    <logger func="${Module}/logran.testIOHook1" level="error" additivity="false">
+        <appender-ref ref="test" />
+        <appender-ref ref="console" />
+    </logger>
+    <logger func="${Module}/logran.testIOHook2" level="debug" additivity="false">
         <appender-ref ref="test" />
     </logger>
 </configuration>
