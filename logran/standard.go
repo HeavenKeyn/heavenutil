@@ -1,11 +1,14 @@
 package logran
 
 import (
+	"github.com/HeavenKeyn/heavenutil/comutil"
 	"github.com/HeavenKeyn/heavenutil/errutil"
+	rotatelogs "github.com/lestrrat-go/file-rotatelogs"
 	"github.com/sirupsen/logrus"
 	"io"
 	"io/ioutil"
 	"os"
+	"time"
 )
 
 func LoadStandardConfig(path string) error {
@@ -37,16 +40,38 @@ func getWriters(refs []AppenderRef) (io.Writer, error) {
 	writers := make([]io.Writer, 0)
 	var errs errutil.MultiErrors
 	for _, ref := range refs {
-		if ref.Ref == "console" {
-			writers = append(writers, os.Stdout)
+		writer, err := getWriter(ref)
+		if err != nil {
+			errs.AddError("创建日志文件失败", err)
 		} else {
-			fp, err := os.OpenFile(ref.Appender.File, os.O_CREATE|os.O_APPEND|os.O_WRONLY, 0666)
-			if err != nil {
-				errs.AddError("创建日志文件失败", err)
-			} else {
-				writers = append(writers, fp)
-			}
+			writers = append(writers, writer)
 		}
 	}
 	return io.MultiWriter(writers...), errs.GetError()
+}
+
+func getWriter(ref AppenderRef) (io.Writer, error) {
+	if ref.Ref == "console" {
+		return os.Stdout, nil
+	} else {
+		linkName, ok := ref.Appender.Policy["LinkName"]
+		if !ok {
+			linkName = ""
+		}
+		maxAge, err := comutil.ValueToInt64(ref.Appender.Policy["MaxAge"])
+		if err != nil {
+			maxAge = 24
+		}
+		rotationTime, err := comutil.ValueToInt64(ref.Appender.Policy["RotationTime"])
+		if err != nil {
+			rotationTime = 60
+		}
+		rl, err := rotatelogs.New(
+			ref.Appender.File,
+			rotatelogs.WithLinkName(linkName),
+			rotatelogs.WithMaxAge(time.Duration(maxAge)*time.Hour),
+			rotatelogs.WithRotationTime(time.Duration(rotationTime)*time.Minute),
+		)
+		return rl, err
+	}
 }

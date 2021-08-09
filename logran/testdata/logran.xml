@@ -5,12 +5,11 @@
     <property name="LOG_HOME" value="testdata" />
 
     <appender name="test">
-        <file>${LOG_HOME}/sanywind.${LOG_PROFILE}.log</file>
+        <file>${LOG_HOME}/%Y%m%d/sanywind.${LOG_PROFILE}.%Y%m%d%H%M.log</file>
         <policy>
-            <FileNamePattern>${LOG_HOME}/%d{yyyy-MM-dd}/sanywind.${LOG_PROFILE}.%d{yyyy-MM-dd}.%i.log.zip</FileNamePattern>
-            <MaxFileSize>50MB</MaxFileSize>
-            <MaxHistory>100</MaxHistory>
-            <totalSizeCap>3GB</totalSizeCap>
+            <LinkName>${LOG_HOME}/sanywind.${LOG_PROFILE}.log</LinkName>
+            <MaxAge>3</MaxAge>
+            <RotationTime>10</RotationTime>
         </policy>
     </appender>
 
