@@ -52,8 +52,11 @@ func NewRootHook(config Configuration, writer io.Writer) RootHook {
 	hook.fileS = make([]string, 0)
 	for _, logger := range config.Logger {
 		if !logger.Additivity {
-			hook.funcS = append(hook.funcS, logger.Func)
-			hook.fileS = append(hook.fileS, logger.File)
+			if logger.Func != "" {
+				hook.funcS = append(hook.funcS, logger.Func)
+			} else if logger.File != "" {
+				hook.fileS = append(hook.fileS, logger.File)
+			}
 		}
 	}
 	return hook
