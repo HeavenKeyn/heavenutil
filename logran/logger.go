@@ -4,6 +4,7 @@ import (
 	"encoding/xml"
 	"fmt"
 	"io/ioutil"
+	"os"
 	"strings"
 )
 
@@ -18,11 +19,25 @@ func LoadConfiguration(path string) (*Configuration, error) {
 		return nil, err
 	}
 	replaceProperty(config)
+	replaceProperties(config)
 	addAppender(config)
 	return config, nil
 }
 
 func replaceProperty(config *Configuration) {
+	for i, property := range config.Property {
+		value := property.Value
+		if strings.Contains(value, "$") {
+			value = strings.ReplaceAll(value, "${", "")
+			value = strings.ReplaceAll(value, "}", "")
+			if os.Getenv(value) != "" {
+				config.Property[i].Value = os.Getenv(value)
+			}
+		}
+	}
+}
+
+func replaceProperties(config *Configuration) {
 	for _, property := range config.Property {
 		oldStr := fmt.Sprintf("${%s}", property.Name)
 		newStr := property.Value

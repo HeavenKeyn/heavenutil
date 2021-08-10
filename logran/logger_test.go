@@ -1,6 +1,8 @@
 package logran
 
-import "testing"
+import (
+	"testing"
+)
 
 func TestLoadConfiguration(t *testing.T) {
 	config, err := LoadConfiguration("testdata/logran.xml")
