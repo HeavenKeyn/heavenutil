@@ -55,6 +55,7 @@ type Root struct {
 
 type Logger struct {
 	Func        string        `xml:"func,attr"`
+	File        string        `xml:"file,attr"`
 	Level       logrus.Level  `xml:"level,attr"`
 	Additivity  bool          `xml:"additivity,attr"`
 	AppenderRef []AppenderRef `xml:"appender-ref"`

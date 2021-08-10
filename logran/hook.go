@@ -3,6 +3,7 @@ package logran
 import (
 	"github.com/sirupsen/logrus"
 	"io"
+	"strings"
 )
 
 type IOHook struct {
@@ -40,6 +41,7 @@ func (h IOHook) Fire(entry *logrus.Entry) error {
 type RootHook struct {
 	IOHook
 	funcS []string
+	fileS []string
 }
 
 func NewRootHook(config Configuration, writer io.Writer) RootHook {
@@ -47,9 +49,11 @@ func NewRootHook(config Configuration, writer io.Writer) RootHook {
 	hook.SetWriter(writer)
 	hook.SetLevel(config.Root.Level)
 	hook.funcS = make([]string, 0)
+	hook.fileS = make([]string, 0)
 	for _, logger := range config.Logger {
 		if !logger.Additivity {
 			hook.funcS = append(hook.funcS, logger.Func)
+			hook.fileS = append(hook.fileS, logger.File)
 		}
 	}
 	return hook
@@ -58,6 +62,11 @@ func NewRootHook(config Configuration, writer io.Writer) RootHook {
 func (hook RootHook) Fire(entry *logrus.Entry) error {
 	for _, s := range hook.funcS {
 		if entry.Caller.Function == s {
+			return nil
+		}
+	}
+	for _, file := range hook.fileS {
+		if strings.Contains(entry.Caller.File, file) {
 			return nil
 		}
 	}
@@ -79,7 +88,10 @@ func NewLoggerHook(logger Logger, writer io.Writer) LoggerHook {
 }
 
 func (hook LoggerHook) Fire(entry *logrus.Entry) error {
-	if entry.Caller.Function != hook.logger.Func {
+	if hook.logger.File != "" && !strings.Contains(entry.Caller.File, hook.logger.File) {
+		return nil
+	}
+	if hook.logger.Func != "" && entry.Caller.Function != hook.logger.Func {
 		return nil
 	}
 	return hook.IOHook.Fire(entry)
