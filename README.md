@@ -8,11 +8,21 @@
 配置文件格式：[logran.xml](logran/testdata/logran.xml)  
 配置类：[Configuration](logran/structs.go)  
 读取配置文件方式：
-
 ```
 func LoadConfiguration(path string) (*Configuration, error)
 ```
+配置说明：  
+`<logger>`每个logger对应一个设置  
+func 对应function的日志，该方法日志将被打印  
+file 对应go文件的日志，该go文件中定义的方法日志将被打印
+
 自定义[Hook](logran/hook.go)及[简单示例](logran/hook_test.go)
+### 标准配置
+读取并加载标准配置：  
+```
+func LoadStandardConfig(path string) error
+```
+
 ## comutil
 该包提供工具类操作
 加载YAML配置
