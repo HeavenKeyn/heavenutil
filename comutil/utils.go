@@ -86,3 +86,16 @@ func ValueToInt64(value interface{}) (int64, error) {
 		return 0, errors.New(fmt.Sprint(value, "不是int64类型"))
 	}
 }
+
+func GetMapKeys(m interface{}) interface{} {
+	t := fmt.Sprintf("%T", m)
+	if t == "map[string]interface {}" {
+		keys := make([]string, 0, len(m.(map[string]interface{})))
+		for s := range m.(map[string]interface{}) {
+			keys = append(keys, s)
+		}
+		return keys
+	}
+	return nil
+
+}
