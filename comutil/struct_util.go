@@ -14,3 +14,27 @@ func StructToMapByTag(obj interface{}, tagName string) map[string]interface{} {
 	}
 	return m
 }
+
+type CountFloat struct {
+	total float64
+	count int
+}
+
+func (c *CountFloat) Add(values ...float64) {
+	for _, value := range values {
+		c.total += value
+	}
+	c.count += len(values)
+}
+
+func (c CountFloat) Total() float64 {
+	return c.total
+}
+
+func (c CountFloat) Count() int {
+	return c.count
+}
+
+func (c CountFloat) Average() float64 {
+	return c.total / float64(c.count)
+}
