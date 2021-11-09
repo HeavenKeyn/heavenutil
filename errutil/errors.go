@@ -13,7 +13,9 @@ func (e *MultiErrors) Append(err error) {
 	if e.errors == nil {
 		e.errors = make([]error, 0)
 	}
-	e.errors = append(e.errors, err)
+	if err != nil {
+		e.errors = append(e.errors, err)
+	}
 }
 
 func (e *MultiErrors) AddError(args ...interface{}) {
