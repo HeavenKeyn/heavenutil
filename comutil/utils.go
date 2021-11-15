@@ -8,6 +8,7 @@ import (
 	"io/ioutil"
 	"strconv"
 	"strings"
+	"time"
 	"unicode"
 )
 
@@ -97,5 +98,9 @@ func GetMapKeys(m interface{}) interface{} {
 		return keys
 	}
 	return nil
+}
 
+// MsUnixToTime Unix毫秒转time
+func MsUnixToTime(unix int64) time.Time {
+	return time.Unix(unix/1000, (unix-unix/1000*1000)*1000000)
 }
