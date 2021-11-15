@@ -22,6 +22,7 @@ func TestValueToInt64(t *testing.T) {
 	t.Log(ValueToInt64(11.0))
 	t.Log(ValueToInt64("11.0"))
 	t.Log(ValueToInt64(""))
+	t.Log(ValueToInt64(1.636714431914e+12))
 }
 
 func TestHumpToUnderline(t *testing.T) {

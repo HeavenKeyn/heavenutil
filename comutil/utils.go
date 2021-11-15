@@ -83,6 +83,8 @@ func ValueToInt64(value interface{}) (int64, error) {
 		return int64(value.(int32)), nil
 	case int:
 		return int64(value.(int)), nil
+	case float64:
+		return int64(value.(float64)), nil
 	default:
 		return 0, errors.New(fmt.Sprint(value, "不是int64类型"))
 	}
