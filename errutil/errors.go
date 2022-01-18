@@ -33,6 +33,14 @@ func (e *MultiErrors) GetError() error {
 	return errors.New(fmt.Sprint(e.errors))
 }
 
+func (e MultiErrors) Error() string {
+	err := e.GetError()
+	if err != nil {
+		return err.Error()
+	}
+	return "nil"
+}
+
 func Error(args ...interface{}) error {
 	return errors.New(fmt.Sprint(args...))
 }
