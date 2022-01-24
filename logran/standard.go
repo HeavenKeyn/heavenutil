@@ -54,24 +54,27 @@ func getWriter(ref AppenderRef) (io.Writer, error) {
 	if ref.Ref == "console" {
 		return os.Stdout, nil
 	} else {
+		options := make([]rotatelogs.Option, 0)
 		linkName, ok := ref.Appender.Policy["LinkName"]
-		if !ok {
-			linkName = ""
+		if ok {
+			options = append(options, rotatelogs.WithLinkName(linkName))
 		}
 		maxAge, err := comutil.ValueToInt64(ref.Appender.Policy["MaxAge"])
-		if err != nil {
-			maxAge = 24
+		if err == nil {
+			options = append(options, rotatelogs.WithMaxAge(time.Duration(maxAge)*time.Hour))
 		}
 		rotationTime, err := comutil.ValueToInt64(ref.Appender.Policy["RotationTime"])
-		if err != nil {
-			rotationTime = 60
+		if err == nil {
+			options = append(options, rotatelogs.WithRotationTime(time.Duration(rotationTime)*time.Minute))
 		}
-		rl, err := rotatelogs.New(
-			ref.Appender.File,
-			rotatelogs.WithLinkName(linkName),
-			rotatelogs.WithMaxAge(time.Duration(maxAge)*time.Hour),
-			rotatelogs.WithRotationTime(time.Duration(rotationTime)*time.Minute),
-		)
-		return rl, err
+		rotationSize, err := comutil.ValueToInt64(ref.Appender.Policy["RotationSize"])
+		if err == nil {
+			options = append(options, rotatelogs.WithRotationSize(rotationSize))
+		}
+		rotationCount, err := comutil.ValueToInt64(ref.Appender.Policy["RotationCount"])
+		if err == nil {
+			options = append(options, rotatelogs.WithRotationCount(uint(rotationCount)))
+		}
+		return rotatelogs.New(ref.Appender.File, options...)
 	}
 }
