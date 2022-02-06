@@ -12,6 +12,7 @@ const (
 	Clickhouse DBType = "clickhouse"
 )
 
+// SQLdb 数据库配置类，根据配置生成DSN或直接配置DSN
 type SQLdb struct {
 	Type     DBType
 	Host     string
