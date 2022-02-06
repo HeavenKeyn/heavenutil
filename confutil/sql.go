@@ -10,21 +10,22 @@ type DBType string
 const (
 	MySQL      DBType = "mysql"
 	Clickhouse DBType = "clickhouse"
+	MongoDB    DBType = "mongodb"
 )
 
-// SQLdb 数据库配置类，根据配置生成DSN或直接配置DSN
-type SQLdb struct {
-	Type     DBType
-	Host     string
-	Port     int
-	Username string
-	Password string
-	Database string
-	Network  string
-	DSN      string
+// DBProp 数据库配置类，根据配置生成DSN或直接配置DSN
+type DBProp struct {
+	Type     DBType `yaml:"type"`
+	Host     string `yaml:"host"`
+	Port     int    `yaml:"port"`
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Database string `yaml:"database"`
+	Network  string `yaml:"network"`
+	DSN      string `yaml:"dsn"`
 }
 
-func (p *SQLdb) GetDSN() string {
+func (p *DBProp) GetDSN() string {
 	if p.DSN != "" { //如果已配置DSN，则直接返回
 		return p.DSN
 	}
@@ -43,6 +44,8 @@ func (p *SQLdb) GetDSN() string {
 		}
 		dsn.WriteString("&charset=utf8&loc=Local&parseTime=true")
 		p.DSN = dsn.String()
+	case MongoDB:
+		p.DSN = fmt.Sprintf("%s://%s:%s@%s:%d", MongoDB, p.Username, p.Password, p.Host, p.Port)
 	default:
 
 	}
