@@ -7,32 +7,10 @@ import (
 	"time"
 )
 
-type Argument struct {
-	ENVName      string
-	FlagName     string
-	DefaultValue interface{}
-}
-
-func NewArgument(envName, flagName string, defaultValue interface{}) Argument {
-	return Argument{}
-}
-
 type ConfigClient struct {
 }
 
 var DefaultClient ConfigClient
-
-func NewConfigClient() ConfigClient {
-	return ConfigClient{}
-}
-
-func (c ConfigClient) AddArg(name string, defaultValue interface{}) {
-
-}
-
-func AddArg(name string, defaultValue interface{}) {
-	DefaultClient.AddArg(name, defaultValue)
-}
 
 const (
 	Split = ","
