@@ -25,6 +25,34 @@ type DBProp struct {
 	DSN      string `yaml:"dsn"`
 }
 
+func (p DBProp) GetType() DBType {
+	return p.Type
+}
+
+func (p DBProp) GetHost() string {
+	return p.Host
+}
+
+func (p DBProp) GetPort() int {
+	return p.Port
+}
+
+func (p DBProp) GetUsername() string {
+	return p.Username
+}
+
+func (p DBProp) GetPassword() string {
+	return p.Password
+}
+
+func (p DBProp) GetDatabase() string {
+	return p.Database
+}
+
+func (p DBProp) GetNetwork() string {
+	return p.Network
+}
+
 func (p *DBProp) GetDSN() string {
 	if p.DSN != "" { //如果已配置DSN，则直接返回
 		return p.DSN
